@@ -18,6 +18,12 @@ In your GitHub Actions workflow file add a step like this:
 The action will make `zine` available in PATH, after that it's up to you to run `zine release`.
 
 
+If you are using Zine in conjunction with Zig (i.e. you integrate Zine in your `build.zig`) then using 
+this action will allow you to avoid building Zine from source by setting `.zine = .system` in `build.zig`.
+
+That said, be aware that `mlugg/setup-zig` will save your Zig cache dir and so building Zine will also be cached.
+The upside of using this action anyway is that it will save you from "slow startups" when your cache expires.
+
 # Full GitHub Pages workflow example.
 
 ```yaml
