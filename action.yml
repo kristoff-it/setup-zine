@@ -1,0 +1,71 @@
+name: 'Setup Zine'
+author: 'Loris Cro'
+description: 'Get the Zine static site generator'
+branding:
+  icon: 'align-center'
+  color: 'yellow'
+inputs:
+  version:  
+    description: 'Version of Zine to fetch'
+    required: true
+    default: 'v0.10.0-preview'
+runs:
+  using: "composite"
+  steps:
+    - name: Get Zine (arm64 Linux)
+      run: wget -O zine.tar.xz "https://github.com/kristoff-it/zine/releases/download/$VERSION/aarch64-linux-musl.tar.xz"
+      shell: bash
+      if: ${{ runner.os == 'Linux' && runner.arch == 'ARM64' }}
+      env:
+        VERSION: ${{ inputs.version }}
+        
+    - name: Get Zine (x64 Linux)
+      run: wget -O zine.tar.xz "https://github.com/kristoff-it/zine/releases/download/$VERSION/x86_64-linux-musl.tar.xz"
+      shell: bash
+      if: ${{ runner.os == 'Linux' && runner.arch == 'X64' }}
+      env:
+        VERSION: ${{ inputs.version }}
+
+    - name: Get Zine (arm64 macOS)
+      run: wget "https://github.com/kristoff-it/zine/releases/download/$VERSION/aarch64-macos.zip"
+      shell: bash
+      if: ${{ runner.os == 'macOS' && runner.arch == 'ARM64' }}
+      env:
+        VERSION: ${{ inputs.version }}
+        
+    - name: Get Zine (x64 macOS)
+      run: wget -O zine.zip "https://github.com/kristoff-it/zine/releases/download/$VERSION/x86_64-macos.zip"
+      shell: bash
+      if: ${{ runner.os == 'macOS' && runner.arch == 'X64' }}
+      env:
+        VERSION: ${{ inputs.version }}
+
+    - name: Get Zine (arm64 Windows)
+      run: wget -O zine.zip "https://github.com/kristoff-it/zine/releases/download/$VERSION/aarch64-windows.zip"
+      shell: bash
+      if: ${{ runner.os == 'Windows' && runner.arch == 'ARM64' }}
+      env:
+        VERSION: ${{ inputs.version }}
+        
+    - name: Get Zine (x64 Windows)
+      run: wget -O zine.zip "https://github.com/kristoff-it/zine/releases/download/$VERSION/x86_64-windows.zip"
+      shell: bash
+      if: ${{ runner.os == 'Windows' && runner.arch == 'X64' }}
+      env:
+        VERSION: ${{ inputs.version }}
+
+    - name: Extract archive (tar)
+      run: mkdir zine && tar xJf zine.tar.xz -C zine
+      shell: bash
+      if: ${{ runner.os == 'Linux' }}
+      
+    - name: Extract archive (zip)
+      run: mkdir zine && unzip zine.tar.xz -d zine
+      shell: bash
+      if: ${{ runner.os != 'Linux' }}
+
+    - name: Add to path
+      run: echo "$PWD/zine" >> $GITHUB_PATH
+      shell: bash
+
+    
