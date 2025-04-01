@@ -1,5 +1,5 @@
 # setup-zine
-GitHub Action to get the Zine static site generator.
+GitHub Action to get the [Zine static site generator](https://zine-ssg.io).
 
 
 # Usage
