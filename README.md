@@ -71,3 +71,5 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 ```
+
+This last example workflow will only work if you have setup GitHub Pages to deploy from GitHub Actions in your repo's settings section.
