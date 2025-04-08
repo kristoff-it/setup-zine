@@ -8,7 +8,7 @@ inputs:
   version:  
     description: 'Version of Zine to fetch'
     required: true
-    default: 'v0.10.0-preview'
+    default: 'v0.10.0'
 runs:
   using: "composite"
   steps:
@@ -60,7 +60,7 @@ runs:
       if: ${{ runner.os == 'Linux' }}
       
     - name: Extract archive (zip)
-      run: mkdir zine && unzip zine.tar.xz -d zine
+      run: mkdir zine && unzip zine.zip -d zine
       shell: bash
       if: ${{ runner.os != 'Linux' }}
 
