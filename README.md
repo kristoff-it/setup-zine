@@ -10,7 +10,7 @@ In your GitHub Actions workflow file add a step like this:
 - name: Setup Zine
   uses: kristoff-it/setup-zine@v1
   with:
-    version: v0.10.0
+    version: v0.10.1
 ```
 
 The `version` field is mandatory and must be `v0.10.0` or higher (previous
@@ -62,7 +62,7 @@ jobs:
       - name: Setup Zine
         uses: kristoff-it/setup-zine@v1
         with:
-          version: v0.10.0
+          version: v0.10.1
 
       - name: Release
         run: zine release
