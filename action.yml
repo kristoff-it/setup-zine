@@ -27,7 +27,7 @@ runs:
         VERSION: ${{ inputs.version }}
 
     - name: Get Zine (arm64 macOS)
-      run: wget "https://github.com/kristoff-it/zine/releases/download/$VERSION/aarch64-macos.zip"
+      run: wget -O zine.zip "https://github.com/kristoff-it/zine/releases/download/$VERSION/aarch64-macos.zip"
       shell: bash
       if: ${{ runner.os == 'macOS' && runner.arch == 'ARM64' }}
       env:
