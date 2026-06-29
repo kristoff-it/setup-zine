@@ -4,34 +4,23 @@ description: "Get the Zine static site generator (https://zine-ssg.io)"
 branding:
   icon: "align-center"
   color: "yellow"
-inputs:
-  version:
-    description: "Manually specify which version of Zine to fetch, leave unset to use `.zine_version` in 'zine.ziggy'"
-    required: false
-    # no default – if omitted, the action will try to extract it from zine.ziggy
-
 runs:
   using: "composite"
   steps:
     - name: Determine Zine version
       run: |
-        if [ -n "${{ inputs.version }}" ]; then
-          echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
-          echo "Using Zine version hardcoded in CI, consider removing the setting to fetch it from 'zine.ziggy' instead"
-        else
-          if [ -f "zine.ziggy" ]; then
-            VERSION_FROM_FILE=$(sed -n 's/.*\.zine_version[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' zine.ziggy)
-            if [ -n "$VERSION_FROM_FILE" ]; then
-              echo "VERSION=$VERSION_FROM_FILE" >> $GITHUB_ENV
-              echo "zine.ziggy requires Zine version $VERSION_FROM_FILE"
-            else
-              echo "Error: No version found in zine.ziggy" >&2
-              exit 1
-            fi
+        if [ -f "zine.ziggy" ]; then
+          VERSION_FROM_FILE=$(sed -n 's/.*\.zine_version[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' zine.ziggy)
+          if [ -n "$VERSION_FROM_FILE" ]; then
+            echo "VERSION=v$VERSION_FROM_FILE" >> $GITHUB_ENV
+            echo "zine.ziggy requires Zine version $VERSION_FROM_FILE"
           else
-            echo "Error: zine.ziggy not found and version input not provided" >&2
+            echo "Error: No version found in zine.ziggy" >&2
             exit 1
           fi
+        else
+          echo "Error: zine.ziggy not found" >&2
+          exit 1
         fi
       shell: bash
 
