@@ -1,64 +1,75 @@
-name: 'Setup Zine'
-author: 'Loris Cro'
-description: 'Get the Zine static site generator'
+name: "Setup Zine"
+author: "Loris Cro"
+description: "Get the Zine static site generator (https://zine-ssg.io)"
 branding:
-  icon: 'align-center'
-  color: 'yellow'
+  icon: "align-center"
+  color: "yellow"
 inputs:
-  version:  
-    description: 'Version of Zine to fetch'
-    required: true
-    default: 'v0.10.0'
+  version:
+    description: "Manually specify which version of Zine to fetch, leave unset to use `.zine_version` in 'zine.ziggy'"
+    required: false
+    # no default – if omitted, the action will try to extract it from zine.ziggy
+
 runs:
   using: "composite"
   steps:
+    - name: Determine Zine version
+      run: |
+        if [ -n "${{ inputs.version }}" ]; then
+          echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
+          echo "Using Zine version hardcoded in CI, consider removing the setting to fetch it from 'zine.ziggy' instead"
+        else
+          if [ -f "zine.ziggy" ]; then
+            VERSION_FROM_FILE=$(sed -n 's/.*\.zine_version[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' zine.ziggy)
+            if [ -n "$VERSION_FROM_FILE" ]; then
+              echo "VERSION=$VERSION_FROM_FILE" >> $GITHUB_ENV
+              echo "zine.ziggy requires Zine version $VERSION_FROM_FILE"
+            else
+              echo "Error: No version found in zine.ziggy" >&2
+              exit 1
+            fi
+          else
+            echo "Error: zine.ziggy not found and version input not provided" >&2
+            exit 1
+          fi
+        fi
+      shell: bash
+
     - name: Get Zine (arm64 Linux)
       run: wget -O zine.tar.xz "https://github.com/kristoff-it/zine/releases/download/$VERSION/aarch64-linux-musl.tar.xz"
       shell: bash
       if: ${{ runner.os == 'Linux' && runner.arch == 'ARM64' }}
-      env:
-        VERSION: ${{ inputs.version }}
-        
+
     - name: Get Zine (x64 Linux)
       run: wget -O zine.tar.xz "https://github.com/kristoff-it/zine/releases/download/$VERSION/x86_64-linux-musl.tar.xz"
       shell: bash
       if: ${{ runner.os == 'Linux' && runner.arch == 'X64' }}
-      env:
-        VERSION: ${{ inputs.version }}
 
     - name: Get Zine (arm64 macOS)
       run: wget -O zine.zip "https://github.com/kristoff-it/zine/releases/download/$VERSION/aarch64-macos.zip"
       shell: bash
       if: ${{ runner.os == 'macOS' && runner.arch == 'ARM64' }}
-      env:
-        VERSION: ${{ inputs.version }}
-        
+
     - name: Get Zine (x64 macOS)
       run: wget -O zine.zip "https://github.com/kristoff-it/zine/releases/download/$VERSION/x86_64-macos.zip"
       shell: bash
       if: ${{ runner.os == 'macOS' && runner.arch == 'X64' }}
-      env:
-        VERSION: ${{ inputs.version }}
 
     - name: Get Zine (arm64 Windows)
       run: wget -O zine.zip "https://github.com/kristoff-it/zine/releases/download/$VERSION/aarch64-windows.zip"
       shell: bash
       if: ${{ runner.os == 'Windows' && runner.arch == 'ARM64' }}
-      env:
-        VERSION: ${{ inputs.version }}
-        
+
     - name: Get Zine (x64 Windows)
       run: wget -O zine.zip "https://github.com/kristoff-it/zine/releases/download/$VERSION/x86_64-windows.zip"
       shell: bash
       if: ${{ runner.os == 'Windows' && runner.arch == 'X64' }}
-      env:
-        VERSION: ${{ inputs.version }}
 
     - name: Extract archive (tar)
       run: mkdir zine && tar xJf zine.tar.xz -C zine
       shell: bash
       if: ${{ runner.os == 'Linux' }}
-      
+
     - name: Extract archive (zip)
       run: mkdir zine && unzip zine.zip -d zine
       shell: bash
@@ -67,5 +78,3 @@ runs:
     - name: Add to path
       run: echo "$PWD/zine" >> $GITHUB_PATH
       shell: bash
-
-    
